@@ -23,88 +23,109 @@ window.onload = function () {
 	}
 
 
-	// create matrices for the game
-	function TetrisGrid (width, height) {
-
-		// creates the 2d array that will track the occupied positions
-		this.grid = createMatrix(width, height);
-
-
-		// adds a block to the given position
-		this.addBlock = function (x, y) {
-			let matrix = this.grid;
-			matrix[matrix.length - (1 + y)][x] = 1;
+	class FrozenPieces {
+		constructor() {
+			this.matrix = createMatrix(gameColumnCount, gameRowCount);
+			this.matrix[23][2] = 1;
+			this.matrix[23][1] = 1;
+			this.matrix[22][2] = 1;
+			this.matrix[23][3] = 1;
 		}
 
-
-		// removes a block from the given position
-		this.removeBlock = function (x, y) {
-			let matrix = this.grid;
-			matrix[matrix.length - (1 + y)][x] = 0;
-		}
-
-
-		// draws the occupied blocks in the grid to the canvas
-		this.drawGrid = function () {
-
-			let matrix = this.grid;
-
-			for (let r = matrix.length - 1; r >= 0; r--) {
-				for (let c = 0; c < matrix[r].length; c++) {
-
-					// only draw block if it is occupied
-					if (matrix[r][c] === 1) {
-						ctx.fillRect(c * squareSize, r * squareSize, squareSize, squareSize);
+		draw() {
+			for (let row = 0; row < this.matrix.length; row++) {
+				for (let col = 0; col < this.matrix[row].length; col++) {
+					if (this.matrix[row][col] != 0) {
+						ctx.strokeRect(col * squareSize, row * squareSize, squareSize, squareSize);
 					}
-
-					ctx.lineWidth = 0.1;
-					ctx.strokeRect(c * squareSize, r * squareSize, squareSize, squareSize);
-
 				}
 			}
+		}
+	}
+	
+
+	class FallingPiece {
+		constructor(shape) {
+			this.shape = shape;
+			this.position = { row: 0, col: 3 };
+		}
+
+
+		draw() {
+			for (let row = 0; row < this.shape.length; row++) {
+				for (let col = 0; col < this.shape[row].length; col++) {
+					if (this.shape[row][col] != 0) {
+						let drawCol = this.position.col + col;
+						let drawRow = this.position.row + row;
+						ctx.strokeRect(drawCol * squareSize, drawRow * squareSize, squareSize, squareSize);
+					}
+				 }
+			}
+		}
+
+
+		shiftDown(board) {
+
+			let potentialPosition = {row: this.position.row + 1, col: this.position.col};
+			let safe = true;
+
+			for (let row = 0; row < this.shape.length; row++) {
+				for (let col = 0; col < this.shape[row].length; col++) {
+					if (this.shape[row][col] != 0) {
+
+						let checkRow = row + potentialPosition.row;
+						let checkCol = col + potentialPosition.col;
+
+						// the piece has reached the bottom of the board
+						if (checkRow >= board.matrix.length) {
+							safe = false;
+
+						// the piece has collided with a set block
+						} else if (board.matrix[checkRow][checkCol] !== 0) {
+							safe = false;
+						}
+
+					}	
+				}
+			}
+
+			// piece did not have any issues, update to new position
+			if (safe) {
+				console.log('position updated');
+				this.position = potentialPosition
+			
+			// piece could not be moved any more, add to board
+			} else {
+
+			}
+		}
+
+
+		shiftAcross(direction) {
+
+		}
+
+
+		rotate() {
+
 		}
 
 
 	}
 
-	function addShape (x, y) {
+	let board = new FrozenPieces();
+	let player = new FallingPiece(shapes['L'].variants[0]);
 
-
-		let shape = [[0, 0, 0], [0, 1, 0], [1, 1, 1]];
-		ctx.fillStyle = 'purple';
-
-		for (let row = 0; row < shape.length; row++) {
-			for (let col = 0; col < shape[row].length; col++) {
-				if (shape[row][col] == 1) {
-					fallingBlocks.addBlock(x + col, y - row);
-				}
-			}
-		}
-
-
-	}
-
-
-	let setBlocks = new TetrisGrid(gameColumnCount, gameRowCount);
-	let fallingBlocks = new TetrisGrid(gameColumnCount, gameRowCount);
-
-
-	// let blocky = 23;
-	// let blockx = 5;
-
-	addShape(1, 6);
-
+	// game timer
 	let gameTimer = setInterval( function() {
 		
-		// if (blocky > 0) {
-		// 	fallingBlocks.removeBlock(blockx, blocky);
-		// 	fallingBlocks.addBlock(blockx, --blocky);
-		// }
-
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-		setBlocks.drawGrid();
-		fallingBlocks.drawGrid();
+		board.draw();
+
+		player.draw();
+		player.shiftDown(board);
+
 
 	}, 300);
 
