@@ -9,9 +9,7 @@ window.onload = function() {
 	const startPosition = {row: 0, col: 3};
 
 	canvas.width = gameColumnCount * squareSize;
-	canvas.height = (gameRowCount) * squareSize;
-
-	ctx.fillStyle = 'black';
+	canvas.height = gameRowCount * squareSize;
 
 
 	// returns a random integer within 0 through max
@@ -41,18 +39,11 @@ window.onload = function() {
 		}
 	}
 
+	// board object, for all the pieces that have been set
+	let board = {
+		matrix: createMatrix(gameColumnCount, gameRowCount),
 
-	// this tracks all of the pieces that have been set and are not controlled by the player
-	class FrozenPieces {
-		constructor() {
-			this.matrix = createMatrix(gameColumnCount, gameRowCount);
-			this.matrix[23][2] = 1;
-			this.matrix[23][1] = 1;
-			this.matrix[22][2] = 1;
-			this.matrix[23][3] = 1;
-		}
-
-		draw() {
+		draw: function() {
 			for (let row = 0; row < this.matrix.length; row++) {
 				for (let col = 0; col < this.matrix[row].length; col++) {
 					if (this.matrix[row][col] != 0) {
@@ -60,51 +51,56 @@ window.onload = function() {
 					}
 				}
 			}
-		}
+		},
 
-		addPiece(piece) {
-			for (let row = 0; row < piece.shape.length; row++) {
-				for (let col = 0; col < piece.shape[row].length; col++) {
-					if (piece.shape[row][col] != 0) {
-						this.matrix[row + piece.position.row][col + piece.position.col] = piece.shape[row][col];
+		addPiece: function(shape) {
+			for (let row = 0; row < shape.piece.length; row++) {
+				for (let col = 0; col < shape.piece[row].length; col++) {
+					if (shape.piece[row][col] != 0) {
+						this.matrix[row + shape.position.row][col + shape.position.col] = shape.piece[row][col];
 					}
 				 }
 			}
 		}
-
 	}
-	
 
-	// this class is used to track the falling piece that is controlled by the player
-	class FallingPiece {
-		constructor() {
-			let temp = randomShape();
-			this.color = temp.color;
-			this.shape = temp.variants[randomInt(temp.variants.length)];
-			this.position = { row: 0, col: 3 };
-		}
 
-		draw() {
-			for (let row = 0; row < this.shape.length; row++) {
-				for (let col = 0; col < this.shape[row].length; col++) {
-					if (this.shape[row][col] != 0) {
+	// initial piece info
+	let first_shape = randomShape();
+	let first_color = first_shape.color;
+	let first_index = randomInt(first_shape.variants.length);
+	let first_piece = first_shape.variants[first_index];
+
+
+	// player object, contains all code related to moving piece
+	let player = {
+		shape: first_shape,
+		color: first_color,
+		index: first_index,
+		piece: first_piece,
+		position: startPosition,
+
+		// draws the piece at its current position
+		draw: function() {
+			for (let row = 0; row < this.piece.length; row++) {
+				for (let col = 0; col < this.piece[row].length; col++) {
+					if (this.piece[row][col] != 0) {
 						let drawCol = this.position.col + col;
 						let drawRow = this.position.row + row;
 						ctx.strokeRect(drawCol * squareSize, drawRow * squareSize, squareSize, squareSize);
 					}
 				 }
 			}
-		}
+		},
 
-		// moves the piece down by 1 row
-		shiftDown(board) {
-
+		// shifts the piece down one row
+		shiftDown: function() {
 			let potentialPosition = {row: this.position.row + 1, col: this.position.col};
 			let safe = true;
 
-			for (let row = 0; row < this.shape.length; row++) {
-				for (let col = 0; col < this.shape[row].length; col++) {
-					if (this.shape[row][col] != 0) {
+			for (let row = 0; row < this.piece.length; row++) {
+				for (let col = 0; col < this.piece[row].length; col++) {
+					if (this.piece[row][col] != 0) {
 
 						let checkRow = row + potentialPosition.row;
 						let checkCol = col + potentialPosition.col;
@@ -130,25 +126,24 @@ window.onload = function() {
 			// piece could not be moved any more, add to board
 			} else {
 				board.addPiece(this);
-				this.shape = randomShape().variants[0];
+				this.piece = randomShape().variants[0];
 				this.position = startPosition;
 			}
-		}
-
-		// moves the piece left or right depending on given input
-		shiftAcross(direction) {
-
+		},
+		
+		// moves piece left or right depending on input
+		shiftAcross: function(direction) {
 			let potentialPosition = {row: this.position.row, col: this.position.col + direction};
 			let safe = true;
 
-			for (let row = 0; row < this.shape.length; row++) {
-				for (let col = 0; col < this.shape[row].length; col++) {
-					if (this.shape[row][col] != 0) {
+			for (let row = 0; row < this.piece.length; row++) {
+				for (let col = 0; col < this.piece[row].length; col++) {
+					if (this.piece[row][col] != 0) {
 
 						let checkRow = row + potentialPosition.row;
 						let checkCol = col + potentialPosition.col;
 
-						// the piece has reached the bottom of the board
+						// the piece has reached the sides of the board
 						if (col >= board.matrix[0].length) {
 							safe = false;
 
@@ -165,43 +160,23 @@ window.onload = function() {
 			if (safe) {
 				// console.log('position updated');
 				this.position = potentialPosition
-			
-			// piece could not be moved any more, add to board
-			} else {
-
 			}
-
 		}
-
-
-		rotate() {
-
-		}
-
 
 	}
 
-	// create the board and player objects
-	let board = new FrozenPieces();
-	let player = new FallingPiece();
-	
-	// draws the current state of the game
-	function update() {
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		board.draw();
-		player.draw();
-	}
 
+	// listen for keypresses
 	document.onkeydown = check;
 
-	// function to check for player keypresses
+	// handle each keypress
 	function check(e) {
 
 		e = e || window.event;
 
 		if (e.keyCode == '38') {
 			// up arrow
-			console.log('up key');
+			player.rotate();
 		}
 
 		else if (e.keyCode == '40') {
@@ -224,11 +199,20 @@ window.onload = function() {
 		
 	}
 
+
+	// draws the current state of the game
+	function update() {
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		board.draw();
+		player.draw();
+	}
+
+
 	// game timer
 	let gameTimer = setInterval( function() {
 		
 		update();
-		player.shiftDown(board);
+		player.shiftDown();
 
 	}, 300);
 
