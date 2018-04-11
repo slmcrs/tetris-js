@@ -143,12 +143,12 @@ window.onload = function() {
 						let checkRow = row + potentialPosition.row;
 						let checkCol = col + potentialPosition.col;
 
-						// the piece has reached the sides of the board
-						if (col >= board.matrix[0].length) {
-							safe = false;
+						// // the piece has reached the sides of the board
+						// if (col >= board.matrix[0].length) {
+						// 	safe = false;
 
 						// the piece has collided with a set block
-						} else if (board.matrix[checkRow][checkCol] !== 0) {
+						if (board.matrix[checkRow][checkCol] !== 0) {
 							safe = false;
 						}
 
