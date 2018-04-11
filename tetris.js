@@ -126,7 +126,13 @@ window.onload = function() {
 			// piece could not be moved any more, add to board
 			} else {
 				board.addPiece(this);
-				this.piece = randomShape().variants[0];
+				
+				//added so variables change for a different piece
+				this.shape = randomShape();
+				this.index = randomInt(this.shape.variants.length);
+				this.piece = this.shape.variants[this.index];
+				this.color = this.piece.color;
+				
 				this.position = startPosition;
 			}
 		},
@@ -157,8 +163,59 @@ window.onload = function() {
 				// console.log('position updated');
 				this.position = potentialPosition
 			}
-		}
+		},
 
+		rotate: function(){
+			//fairly simple, switch variants without going
+			//out of bounds of array
+			
+			let newIndex = this.index;
+			
+			
+			if(this.index == this.shape.variants.length-1){
+				newIndex = 0;
+			} else {
+				newIndex++;
+			}
+			this.index = newIndex;
+			
+			this.piece = this.shape.variants[newIndex];
+			
+			
+			
+			let potentialPosition = {row: this.position.row, col: this.position.col };
+			
+			
+			//TODO: working on function to determine new position
+			//after rotation. As of right now rotating seems to move
+			//pieces left or right by one collumn level.
+			//also pieces CAN get stuck on side of board
+			//during rotation.
+			
+			let safe = true;
+		
+			for (let row = 0; row < this.piece.length; row++) {
+				for (let col = 0; col < this.piece[row].length; col++) {
+					if (this.piece[row][col] != 0 ) {
+
+						let checkRow = row + potentialPosition.row;
+						let checkCol = col + potentialPosition.col;
+
+						// the piece has collided with a set block
+						if (board.matrix[checkRow][checkCol] !== 0) {
+							safe = false;
+						}
+
+					}	
+				}
+			}
+
+			// piece did not have any issues, update to new position
+			if (safe) {
+				// console.log('position updated');
+				this.position = potentialPosition
+			}
+		}
 	}
 
 
@@ -173,6 +230,7 @@ window.onload = function() {
 		if (e.keyCode == '38') {
 			// up arrow
 			player.rotate();
+			update();
 		}
 
 		else if (e.keyCode == '40') {
