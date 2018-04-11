@@ -2,7 +2,7 @@ window.onload = function() {
 
 	const canvas = document.getElementById('play_area');
 	const ctx = canvas.getContext('2d');
-
+	
 	const gameRowCount = 24;
 	const gameColumnCount = 10;
 	const squareSize = 30;
@@ -47,6 +47,8 @@ window.onload = function() {
 			for (let row = 0; row < this.matrix.length; row++) {
 				for (let col = 0; col < this.matrix[row].length; col++) {
 					if (this.matrix[row][col] != 0) {
+						ctx.strokeStyle = "black";
+						ctx.lineWidth = 2;
 						ctx.strokeRect(col * squareSize, row * squareSize, squareSize, squareSize);
 					}
 				}
@@ -59,7 +61,7 @@ window.onload = function() {
 					if (shape.piece[row][col] != 0) {
 						this.matrix[row + shape.position.row][col + shape.position.col] = shape.piece[row][col];
 					}
-				 }
+				}
 			}
 		}
 	}
@@ -87,9 +89,11 @@ window.onload = function() {
 					if (this.piece[row][col] != 0) {
 						let drawCol = this.position.col + col;
 						let drawRow = this.position.row + row;
+						ctx.strokeStyle = "green";
+						ctx.lineWidth = 2;
 						ctx.strokeRect(drawCol * squareSize, drawRow * squareSize, squareSize, squareSize);
 					}
-				 }
+				}
 			}
 		},
 
@@ -160,8 +164,7 @@ window.onload = function() {
 
 			// piece did not have any issues, update to new position
 			if (safe) {
-				// console.log('position updated');
-				this.position = potentialPosition
+				this.position = potentialPosition;
 			}
 		},
 
@@ -171,19 +174,14 @@ window.onload = function() {
 			
 			let newIndex = this.index;
 			
-			
-			if(this.index == this.shape.variants.length-1){
+			if (this.index == this.shape.variants.length - 1) {
 				newIndex = 0;
 			} else {
 				newIndex++;
 			}
+
 			this.index = newIndex;
-			
-			this.piece = this.shape.variants[newIndex];
-			
-			
-			
-			let potentialPosition = {row: this.position.row, col: this.position.col };
+			let potentialPiece = this.shape.variants[newIndex];
 			
 			
 			//TODO: working on function to determine new position
@@ -194,12 +192,12 @@ window.onload = function() {
 			
 			let safe = true;
 		
-			for (let row = 0; row < this.piece.length; row++) {
-				for (let col = 0; col < this.piece[row].length; col++) {
-					if (this.piece[row][col] != 0 ) {
+			for (let row = 0; row < potentialPiece.length; row++) {
+				for (let col = 0; col < potentialPiece[row].length; col++) {
+					if (potentialPiece[row][col] != 0 ) {
 
-						let checkRow = row + potentialPosition.row;
-						let checkCol = col + potentialPosition.col;
+						let checkRow = row + this.position.row;
+						let checkCol = col + this.position.col;
 
 						// the piece has collided with a set block
 						if (board.matrix[checkRow][checkCol] !== 0) {
@@ -210,10 +208,9 @@ window.onload = function() {
 				}
 			}
 
-			// piece did not have any issues, update to new position
+			// piece did not have any issues, update to new piece
 			if (safe) {
-				// console.log('position updated');
-				this.position = potentialPosition
+				this.piece = potentialPiece;
 			}
 		}
 	}
