@@ -4,7 +4,6 @@ Just another tetris clone in HTML5 + JS
 ## What is left to do:
 - Important:
   * check if game is over when pieces reach the top
-  * colorize/texture blocks for each piece
   * side panel that shows next piece & score
   * scoring system
   * add start & pause menu
