@@ -50,7 +50,10 @@ window.onload = function() {
 			for (let row = 0; row < this.matrix.length; row++) {
 				for (let col = 0; col < this.matrix[row].length; col++) {
 					
-					
+					//it has occured to me that this method will make it
+					//difficult to color the blocks once they are 'set'.
+					//we may want to consider giving each color their own
+					//number besides '1', for example blue would be '5'
 					if (this.matrix[row][col] != 0) {
 						ctx.strokeStyle = "black";
 						ctx.lineWidth = 2;
@@ -77,34 +80,40 @@ window.onload = function() {
 		checkForLines: function(){
 		
 			let line = true;
+			let shiftNeeded = true;
 			
 			for (let row = 0; row < this.matrix.length; row++) {
-					for (let col = 0; col < this.matrix[row].length; col++) {
-							if(this.matrix[row][col] != 1){
-								
-								line = false;
-							}
-					}
+				for (let col = 0; col < this.matrix[row].length; col++) {
+						if(this.matrix[row][col] != 1){
+							
+							line = false;
+						}
+				}
 				if(line == true){
 					for (let col = 0; col < this.matrix[row].length; col++) {
 						this.matrix[row][col] = 0;
 					}
-					//Slide blocks down. Currently only slides everything
-					//down by one row. need functionality for when there is a gap
-					//between blocks, they will fall. Much like the 
-					//shift down function for 'player'
+					//Slide blocks down if there is space beneath them
+					//after clear.
+					let index = row;
+					for(index; index > 0; index--){
+							
+						
+						for(let col = 0; col < this.matrix[index].length; col++){
+							
+							if(this.matrix[index][col] == 0 && this.matrix[index-1][col] == 1){
+								this.matrix[index][col] = 1;
+								this.matrix[index-1][col] = 0;
+							}
 					
-					for(let row = this.matrix.length-1; row > 0; row--){
-						
-						
-						for(let col = 0; col < this.matrix[row].length; col++){
-							this.matrix[row][col] = this.matrix[row-1][col];
 						}
 					}
 					
 				}
 				line = true;
 			}
+		
+		
 		}
 		
 	}
