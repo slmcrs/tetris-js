@@ -4,18 +4,27 @@
 	//now game starts after pressing 'space'.
 	//at 'gameOver' goes back to start screen 
 	//after alert prompt.
+	var started = false;
+	
 	window.onkeydown = function(event){
 		
 		event = event || window.event;
 		
-		if(event.keyCode == '32'){
+		
+		if(event.keyCode == '32' && !started){
+			
+			started = true;
+			
+			var pause = false;
+			
 			document.getElementById('startScreen').style.display = "none";
 			document.getElementById('play_area').style.display = "block";
 			
 			const canvas = document.getElementById('play_area');
 			const ctx = canvas.getContext('2d');
 			
-			
+			const pauseImg = new Image();
+		    pauseImg.src = './img/paused.png';
 			
 			const gameRowCount = 24;
 			const gameColumnCount = 10;
@@ -347,6 +356,15 @@
 					update();	   
 				}
 				
+				else if (e.keyCode == '32') {
+					// spaceBar
+					if(pause){
+						pause = false;
+					} else {
+						pause = true;
+						ctx.drawImage(pauseImg, 150 - (pauseImg.width/2), 360 - (pauseImg.height/2));
+					}
+				}
 			}
 
 
@@ -360,17 +378,26 @@
 				
 			}
 
+			function showPaused() {
+				
+			}
 
 			// game timer
 			
 			//if 'gameOver' is flagged we show a 
 			//game over message and reload. Primitive for now
 			//but we can make it fancier later if neccessary
+			
+			//need to pause timer when 'paused'.
+			//not sure how to do this. Could just
+			//scrap the timer, tetris isn't a long game and
+			//if player can continue scoring why limit time?
 			let gameTimer = setInterval( function() {
-				if(!gameOver){
+				if(!gameOver && !pause){
 					update();
 					player.shiftDown();
-				} else {
+				
+				} else if(gameOver){
 					console.log("over");
 					alert("GAME OVER");
 					document.location.reload();
