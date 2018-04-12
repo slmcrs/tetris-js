@@ -18,7 +18,8 @@
 			var pause = false;
 			
 			document.getElementById('startScreen').style.display = "none";
-			document.getElementById('play_area').style.display = "block";
+			document.getElementById('play_area').style.display = "inline-block";
+			document.getElementById('side_area').style.display = "inline-block";
 			
 			const canvas = document.getElementById('play_area');
 			const ctx = canvas.getContext('2d');

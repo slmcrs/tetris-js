@@ -6,16 +6,19 @@
 	<script src="shapes.js"></script>
 </head>
 <body>
-
-	<img id="startScreen" width="300" height="720" src="./img/tetris_start.png" />
+	<div id="tetris" width="500" height="720" style="padding:none">
+		<img id="startScreen" width="500" height="720" src="./img/tetris_start.png" 
+		style="border:5px solid #696969; margin: 0; padding: 0;" />
 	
-	<canvas id="play_area" width="400" height="720" style="border:1px solid #000000; background-color: black; display:none;">
+		<canvas id="play_area" width="400" height="720" style="border:5px solid #696969; background-color: black; display:none;
+		margin: 0; padding: 0;">
+		</canvas>
 		
-	</canvas>
-
-	<div id="side_area">
-		
+		<canvas id="side_area" width="200" height="720" style="border:5px solid #696969; background-color: black; display:none;
+		margin: 0; padding: 0;">
+		</canvas>
 	</div>
+	
 
 </body>
 </html>
