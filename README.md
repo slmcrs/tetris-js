@@ -9,11 +9,11 @@ is looking for.
 
 ## What is left to do:
 - Important:
-  * check if game is over when pieces reach the top
   * side panel that shows next piece & score
   * scoring system
   * add start & pause menu
 - Not so important:
+  * make 'gameOver' action more interesting.
   * when a line is cleared, if a piece is broken apart from it, the broken 'clumps'
   should fall until there is no empty space. Not all tetris games implement this,
   but I might implement it later.
