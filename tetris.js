@@ -22,6 +22,9 @@
 			
 			const canvas = document.getElementById('play_area');
 			const ctx = canvas.getContext('2d');
+			//ctx.fillStyle='black';
+			//ctx.fillRect(0, 0, canvas.width, canvas.height);
+			
 			
 			const pauseImg = new Image();
 		    pauseImg.src = './img/paused.png';
@@ -106,9 +109,10 @@
 					
 					for (let row = 0; row < this.matrix.length; row++) {
 						for (let col = 0; col < this.matrix[row].length; col++) {
+							
 							if (this.matrix[row][col] != 0) {
 								drawBlock(this.matrix[row][col], col, row);
-							}
+							} 
 						}
 					}
 				},
