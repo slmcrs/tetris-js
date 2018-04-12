@@ -11,6 +11,7 @@ window.onload = function() {
 	canvas.width = gameColumnCount * squareSize;
 	canvas.height = gameRowCount * squareSize;
 
+	var gameOver = false;
 
 	// returns a random integer within 0 through max
 	function randomInt(max) {
@@ -89,11 +90,18 @@ window.onload = function() {
 			}
 		},
 
+		//if piece cannot be added (triggers an error) flag 'gameOver' 
+		//to end game
 		addPiece: function(shape) {
 			for (let row = 0; row < shape.piece.length; row++) {
 				for (let col = 0; col < shape.piece[row].length; col++) {
 					if (shape.piece[row][col] != 0) {
+						try{
 						this.matrix[row + shape.position.row][col + shape.position.col] = shape.color;
+						
+						}catch(error){
+							gameOver = true;	
+						}
 					}
 				}
 			}
@@ -138,7 +146,7 @@ window.onload = function() {
 			}
 		
 		}
-		
+	
 	}
 
 
@@ -340,11 +348,19 @@ window.onload = function() {
 
 
 	// game timer
+	
+	//if 'gameOver' is flagged we show a 
+	//game over message and reload. Primitive for now
+	//but we can make it fancier later if neccessary
 	let gameTimer = setInterval( function() {
-		
-		update();
-		player.shiftDown();
-
+		if(!gameOver){
+			update();
+			player.shiftDown();
+		} else {
+			console.log("over");
+			alert("GAME OVER");
+			document.location.reload();
+		}
 	}, 300);
 
 	
