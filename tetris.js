@@ -6,7 +6,7 @@ window.onload = function() {
 	const gameRowCount = 24;
 	const gameColumnCount = 10;
 	const squareSize = 30;
-	const startPosition = {row: 0, col: 3};
+	const startPosition = {row: -4, col: 3};
 
 	canvas.width = gameColumnCount * squareSize;
 	canvas.height = gameRowCount * squareSize;
@@ -109,8 +109,11 @@ window.onload = function() {
 						let checkRow = row + potentialPosition.row;
 						let checkCol = col + potentialPosition.col;
 
+						if (checkRow < 0) {
+							continue;
+
 						// the piece has reached the bottom of the board
-						if (checkRow >= board.matrix.length) {
+						} else if (checkRow >= board.matrix.length) {
 							safe = false;
 
 						// the piece has collided with a set block
@@ -153,8 +156,11 @@ window.onload = function() {
 						let checkRow = row + potentialPosition.row;
 						let checkCol = col + potentialPosition.col;
 
+						if (checkRow < 0) {
+							continue;
+
 						// the piece has collided with a set block
-						if (board.matrix[checkRow][checkCol] !== 0) {
+						} else if (board.matrix[checkRow][checkCol] !== 0) {
 							safe = false;
 						}
 
@@ -187,8 +193,8 @@ window.onload = function() {
 			//TODO: working on function to determine new position
 			//after rotation. As of right now rotating seems to move
 			//pieces left or right by one collumn level.
-			//also pieces CAN get stuck on side of board
-			//during rotation.
+
+			// TODO: Push piece over if attempted rotate against wall
 			
 			let safe = true;
 		
