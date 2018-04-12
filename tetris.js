@@ -21,10 +21,12 @@
 			document.getElementById('play_area').style.display = "inline-block";
 			document.getElementById('side_area').style.display = "inline-block";
 			
+			const sideCanvas = document.getElementById("side_area");
+			const sideCtx = sideCanvas.getContext('2d');
+			
 			const canvas = document.getElementById('play_area');
 			const ctx = canvas.getContext('2d');
-			//ctx.fillStyle='black';
-			//ctx.fillRect(0, 0, canvas.width, canvas.height);
+	
 			
 			
 			const pauseImg = new Image();
@@ -103,7 +105,8 @@
 			// board object, for all the pieces that have been set
 			let board = {
 				matrix: createMatrix(gameColumnCount, gameRowCount),
-
+				
+				
 				draw: function() {
 					
 					this.checkForLines();
@@ -151,6 +154,11 @@
 						}
 						if (line == true) {
 
+							//add to score
+							scoreBoard.linesCleared += 1;
+							scoreBoard.score += 100;
+							scoreBoard.draw();
+							
 							for (let col = 0; col < this.matrix[row].length; col++) {
 								this.matrix[row][col] = 0;
 							}
@@ -176,8 +184,42 @@
 				}
 			
 			}
+			
+			//draw  all text that doesn't change
+			sideCtx.font = "26px Fixedsys";
+			sideCtx.fillStyle = "white";
+			sideCtx.textAlign = "center";
+			sideCtx.fillText("SCORE:", sideCanvas.width/2,50); 
+			sideCtx.fillText("LINES:", sideCanvas.width/2,250);
+			sideCtx.fillText("NEXT PIECE:", sideCanvas.width/2,450);
+			
+			let scoreBoard = { 
+				score: 0,
+				linesCleared: 0,
+			
+				//call whenever score/linesCleared/nextpiece changes
+				// no functionality for next piece currently
+				draw: function() {
+					sideCtx.fillStyle = "black";
+					sideCtx.fillRect(0, 0, sideCanvas.width, sideCanvas.height);
+					
+					sideCtx.fillStyle = "white";
+					sideCtx.textAlign = "center";
+					sideCtx.fillText("SCORE:", sideCanvas.width/2,50); 
+					sideCtx.fillText("LINES:", sideCanvas.width/2,250);
+					sideCtx.fillText("NEXT PIECE:", sideCanvas.width/2,450);
+					
+					
+					sideCtx.fillText("" + scoreBoard.score, sideCanvas.width/2,80);
+					sideCtx.fillText("" + scoreBoard.linesCleared, sideCanvas.width/2,280);
+				},	
+			
+			}
 
-
+			//post initial values
+			sideCtx.fillText("" + scoreBoard.score, sideCanvas.width/2,80);
+			sideCtx.fillText("" + scoreBoard.linesCleared, sideCanvas.width/2,280);
+			
 			// initial piece info
 			let first_shape = randomShape();
 			let first_color = first_shape.colorNumber;
@@ -241,6 +283,10 @@
 					// piece could not be moved any more, add to board
 					} else {
 						board.addPiece(this);
+						
+						//add to score
+						scoreBoard.score += 10;
+						scoreBoard.draw();
 						
 						//added so variables change for a different piece
 						this.shape = randomShape();
