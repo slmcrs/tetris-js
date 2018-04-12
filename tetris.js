@@ -38,6 +38,39 @@ window.onload = function() {
 			}
 		}
 	}
+	
+	// maps the color number to the img file
+	// works for now but should work on a better
+	// solution later
+	function getImgSrc(number) {
+		switch (number) {
+			case 0:
+				return './img/white.png';
+			case 1:
+				return './img/orange.png';
+			case 2:
+				return './img/blue.png';
+			case 3:
+				return './img/purple.png';
+			case 4:
+				return './img/green.png';
+			case 5:
+				return './img/red.png';
+			case 6:
+				return './img/aqua.png';
+			case 7:
+				return './img/yellow.png';
+			default:
+				break;
+		}
+	}
+
+	// draws the block png at the specified position
+	function drawBlock(colorInt, col, row) {
+		let img = new Image();
+		img.src = getImgSrc(colorInt);
+		ctx.drawImage(img, col * img.width, row * img.height);
+	}
 
 	// board object, for all the pieces that have been set
 	let board = {
@@ -49,15 +82,8 @@ window.onload = function() {
 			
 			for (let row = 0; row < this.matrix.length; row++) {
 				for (let col = 0; col < this.matrix[row].length; col++) {
-					
-					//it has occured to me that this method will make it
-					//difficult to color the blocks once they are 'set'.
-					//we may want to consider giving each color their own
-					//number besides '1', for example blue would be '5'
 					if (this.matrix[row][col] != 0) {
-						ctx.strokeStyle = "black";
-						ctx.lineWidth = 2;
-						ctx.strokeRect(col * squareSize, row * squareSize, squareSize, squareSize);
+						drawBlock(this.matrix[row][col], col, row);
 					}
 				}
 			}
@@ -67,7 +93,7 @@ window.onload = function() {
 			for (let row = 0; row < shape.piece.length; row++) {
 				for (let col = 0; col < shape.piece[row].length; col++) {
 					if (shape.piece[row][col] != 0) {
-						this.matrix[row + shape.position.row][col + shape.position.col] = shape.piece[row][col];
+						this.matrix[row + shape.position.row][col + shape.position.col] = shape.color;
 					}
 				}
 			}
@@ -76,7 +102,6 @@ window.onload = function() {
 		
 		// see if there are any lines in the row
 	    // if so clear them.
-		
 		checkForLines: function(){
 		
 			let line = true;
@@ -84,35 +109,33 @@ window.onload = function() {
 			
 			for (let row = 0; row < this.matrix.length; row++) {
 				for (let col = 0; col < this.matrix[row].length; col++) {
-						if(this.matrix[row][col] != 1){
-							
-							line = false;
-						}
+					if (this.matrix[row][col] == 0) {	
+						line = false;
+					}
 				}
-				if(line == true){
+				if (line == true) {
+
 					for (let col = 0; col < this.matrix[row].length; col++) {
 						this.matrix[row][col] = 0;
 					}
-					//Slide blocks down if there is space beneath them
-					//after clear.
+					// Slide blocks down if there is space beneath them
+					// after clear.
 					let index = row;
-					for(index; index > 0; index--){
-							
-						
-						for(let col = 0; col < this.matrix[index].length; col++){
-							
-							if(this.matrix[index][col] == 0 && this.matrix[index-1][col] == 1){
-								this.matrix[index][col] = 1;
-								this.matrix[index-1][col] = 0;
+
+					for (index; index > 0; index--) {
+						for (let col = 0; col < this.matrix[index].length; col++) {
+							if (this.matrix[index][col] == 0 && this.matrix[index - 1][col] != 0) {
+								this.matrix[index][col] = this.matrix[index - 1][col];
+								this.matrix[index - 1][col] = 0;
 							}
-					
+
 						}
+
 					}
 					
 				}
 				line = true;
 			}
-		
 		
 		}
 		
@@ -121,7 +144,7 @@ window.onload = function() {
 
 	// initial piece info
 	let first_shape = randomShape();
-	let first_color = first_shape.color;
+	let first_color = first_shape.colorNumber;
 	let first_index = randomInt(first_shape.variants.length);
 	let first_piece = first_shape.variants[first_index];
 
@@ -136,17 +159,12 @@ window.onload = function() {
 
 		// draws the piece at its current position
 		draw: function() {
-		
-			
-			
 			for (let row = 0; row < this.piece.length; row++) {
 				for (let col = 0; col < this.piece[row].length; col++) {
 					if (this.piece[row][col] != 0) {
 						let drawCol = this.position.col + col;
 						let drawRow = this.position.row + row;
-						ctx.strokeStyle = "green";
-						ctx.lineWidth = 2;
-						ctx.strokeRect(drawCol * squareSize, drawRow * squareSize, squareSize, squareSize);
+						drawBlock(this.color, drawCol, drawRow);
 					}
 				}
 			}
@@ -182,7 +200,6 @@ window.onload = function() {
 
 			// piece did not have any issues, update to new position
 			if (safe) {
-				// console.log('position updated');
 				this.position = potentialPosition
 			
 			// piece could not be moved any more, add to board
@@ -193,8 +210,7 @@ window.onload = function() {
 				this.shape = randomShape();
 				this.index = randomInt(this.shape.variants.length);
 				this.piece = this.shape.variants[this.index];
-				this.color = this.piece.color;
-				
+				this.color = this.shape.colorNumber;
 				this.position = startPosition;
 			}
 		},
@@ -293,7 +309,7 @@ window.onload = function() {
 
 		else if (e.keyCode == '40') {
 			// down arrow
-			player.shiftDown(board);
+			player.shiftDown();
 			update();			
 		}
 

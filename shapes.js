@@ -2,6 +2,7 @@ let shapes = {
 
 	'L': {
 		'color': 'orange',
+		'colorNumber': 1,
 		'variants': [
 			[
 				[0,1,0],
@@ -28,6 +29,7 @@ let shapes = {
 
 	'J': {
 		'color': 'blue',
+		'colorNumber': 2,
 		'variants': [
 			[
 				[0,1,0],
@@ -55,6 +57,7 @@ let shapes = {
 
 	'T': {
 		'color': 'purple',
+		'colorNumber': 3,
 		'variants': [
 			
 			[
@@ -82,6 +85,7 @@ let shapes = {
 
 	'S': {
 		'color': 'green',
+		'colorNumber': 4,
 		'variants': [
 			[
 				[0,1,1],
@@ -108,6 +112,7 @@ let shapes = {
 
 	'Z': {
 		'color': 'red',
+		'colorNumber': 5,
 		'variants': [
 			[
 				[1,1,0],
@@ -134,6 +139,7 @@ let shapes = {
 
 	'I': {
 		'color': 'aqua',
+		'colorNumber': 6,
 		'variants': [
 			[
 				[0,1,0,0],
@@ -164,6 +170,7 @@ let shapes = {
 
 	'O': {
 		'color': 'yellow',
+		'colorNumber': 7,
 		'variants': [
 			[
 				[1,1],
