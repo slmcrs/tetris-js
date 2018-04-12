@@ -44,8 +44,13 @@ window.onload = function() {
 		matrix: createMatrix(gameColumnCount, gameRowCount),
 
 		draw: function() {
+			
+			this.checkForLines();
+			
 			for (let row = 0; row < this.matrix.length; row++) {
 				for (let col = 0; col < this.matrix[row].length; col++) {
+					
+					
 					if (this.matrix[row][col] != 0) {
 						ctx.strokeStyle = "black";
 						ctx.lineWidth = 2;
@@ -63,7 +68,45 @@ window.onload = function() {
 					}
 				}
 			}
+		},
+		
+		
+		// see if there are any lines in the row
+	    // if so clear them.
+		
+		checkForLines: function(){
+		
+			let line = true;
+			
+			for (let row = 0; row < this.matrix.length; row++) {
+					for (let col = 0; col < this.matrix[row].length; col++) {
+							if(this.matrix[row][col] != 1){
+								
+								line = false;
+							}
+					}
+				if(line == true){
+					for (let col = 0; col < this.matrix[row].length; col++) {
+						this.matrix[row][col] = 0;
+					}
+					//Slide blocks down. Currently only slides everything
+					//down by one row. need functionality for when there is a gap
+					//between blocks, they will fall. Much like the 
+					//shift down function for 'player'
+					
+					for(let row = this.matrix.length-1; row > 0; row--){
+						
+						
+						for(let col = 0; col < this.matrix[row].length; col++){
+							this.matrix[row][col] = this.matrix[row-1][col];
+						}
+					}
+					
+				}
+				line = true;
+			}
 		}
+		
 	}
 
 
@@ -84,6 +127,9 @@ window.onload = function() {
 
 		// draws the piece at its current position
 		draw: function() {
+		
+			
+			
 			for (let row = 0; row < this.piece.length; row++) {
 				for (let col = 0; col < this.piece[row].length; col++) {
 					if (this.piece[row][col] != 0) {
@@ -259,9 +305,12 @@ window.onload = function() {
 
 	// draws the current state of the game
 	function update() {
+		
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		
 		board.draw();
 		player.draw();
+		
 	}
 
 
@@ -273,4 +322,9 @@ window.onload = function() {
 
 	}, 300);
 
+	
+	
 }
+
+
+
