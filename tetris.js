@@ -6,7 +6,7 @@
 	//after alert prompt.
 	var started = false;
 	
-	window.onkeydown = function(event){
+	window.onkeydown = function start(event){
 		
 		event = event || window.event;
 		
@@ -27,7 +27,8 @@
 			const canvas = document.getElementById('play_area');
 			const ctx = canvas.getContext('2d');
 	
-			
+			const gameOverImg = new Image();
+			gameOverImg.src = './img/game_over.png';
 			
 			const pauseImg = new Image();
 		    pauseImg.src = './img/paused.png';
@@ -382,38 +383,44 @@
 			function check(e) {
 
 				e = e || window.event;
-
-				if (e.keyCode == '38') {
-					// up arrow
-					player.rotate();
-					update();
-				}
-
-				else if (e.keyCode == '40') {
-					// down arrow
-					player.shiftDown();
-					update();			
-				}
-
-				else if (e.keyCode == '37') {
-					// left arrow
-					player.shiftAcross(-1);
-					update();	   
-				}
-
-				else if (e.keyCode == '39') {
-					// right arrow
-					player.shiftAcross(1);
-					update();	   
-				}
 				
-				else if (e.keyCode == '32') {
-					// spaceBar
-					if(pause){
-						pause = false;
+				
+				if(!pause && !gameOver){
+					if (e.keyCode == '38') {
+						// up arrow
+						player.rotate();
+						update();
+					}
+
+					else if (e.keyCode == '40') {
+						// down arrow
+						player.shiftDown();
+						update();			
+					}
+
+					else if (e.keyCode == '37') {
+						// left arrow
+						player.shiftAcross(-1);
+						update();	   
+					}
+
+					else if (e.keyCode == '39') {
+						// right arrow
+						player.shiftAcross(1);
+						update();	   
+					}
+				}
+				if (e.keyCode == '32') {
+				// spaceBar
+					if(gameOver){
+						document.location.reload();
 					} else {
-						pause = true;
-						ctx.drawImage(pauseImg, 150 - (pauseImg.width/2), 360 - (pauseImg.height/2));
+						if(pause){
+							pause = false;
+						} else {
+							pause = true;
+							ctx.drawImage(pauseImg, 150 - (pauseImg.width/2), 360 - (pauseImg.height/2));
+						}
 					}
 				}
 			}
@@ -449,9 +456,8 @@
 					player.shiftDown();
 				
 				} else if(gameOver){
-					console.log("over");
-					alert("GAME OVER");
-					document.location.reload();
+					ctx.drawImage(gameOverImg, 150 - (gameOverImg.width/2), 360 - (gameOverImg.height/2));
+					//document.location.reload();
 				}
 			}, 300);
 		}
