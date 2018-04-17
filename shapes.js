@@ -1,7 +1,7 @@
 let shapes = {
 
 	'L': {
-		'color': 'orange',
+		'src': './img/orange.png',
 		'colorNumber': 1,
 		'variants': [
 			[
@@ -28,7 +28,7 @@ let shapes = {
 	},
 
 	'J': {
-		'color': 'blue',
+		'src': './img/blue.png',
 		'colorNumber': 2,
 		'variants': [
 			[
@@ -56,7 +56,7 @@ let shapes = {
 	},
 
 	'T': {
-		'color': 'purple',
+		'src': './img/purple.png',
 		'colorNumber': 3,
 		'variants': [
 			
@@ -84,7 +84,7 @@ let shapes = {
 	},
 
 	'S': {
-		'color': 'green',
+		'src': './img/green.png',
 		'colorNumber': 4,
 		'variants': [
 			[
@@ -111,7 +111,7 @@ let shapes = {
 	},
 
 	'Z': {
-		'color': 'red',
+		'src': './img/red.png',
 		'colorNumber': 5,
 		'variants': [
 			[
@@ -138,7 +138,7 @@ let shapes = {
 	},
 
 	'I': {
-		'color': 'aqua',
+		'src': './img/aqua.png',
 		'colorNumber': 6,
 		'variants': [
 			[
@@ -169,7 +169,7 @@ let shapes = {
 	},
 
 	'O': {
-		'color': 'yellow',
+		'src': './img/yellow.png',
 		'colorNumber': 7,
 		'variants': [
 			[

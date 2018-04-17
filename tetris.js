@@ -65,32 +65,17 @@ window.onkeydown = function start(event) {
 			}
 		}
 		
+
 		// maps the color number to the img file
-		// works for now but should work on a better
-		// solution later
 		function getImgSrc(number) {
-			switch (number) {
-				case 0:
-				return './img/white.png';
-				case 1:
-				return './img/orange.png';
-				case 2:
-				return './img/blue.png';
-				case 3:
-				return './img/purple.png';
-				case 4:
-				return './img/green.png';
-				case 5:
-				return './img/red.png';
-				case 6:
-				return './img/aqua.png';
-				case 7:
-				return './img/yellow.png';
-				default:
-				break;
+			for (shape in shapes) {
+				if (shapes[shape].colorNumber === number) {
+					return shapes[shape].src;
+				}
 			}
 		}
 		
+
 		// draws the block png at the specified position
 		function drawBlock(colorInt, col, row) {
 			let img = new Image();
@@ -98,6 +83,7 @@ window.onkeydown = function start(event) {
 			ctx.drawImage(img, col * img.width, row * img.height);
 		}
 		
+
 		// board object, for all the pieces that have been set
 		let board = {
 			matrix: createMatrix(gameColumnCount, gameRowCount),
@@ -112,6 +98,7 @@ window.onkeydown = function start(event) {
 				}
 			},
 			
+
 			// if piece cannot be added (triggers an error) flag 'gameOver' 
 			// to end game
 			addPiece: function(shape) {
@@ -161,20 +148,16 @@ window.onkeydown = function start(event) {
 								if (this.matrix[index][col] == 0 && this.matrix[index - 1][col] != 0) {
 									this.matrix[index][col] = this.matrix[index - 1][col];
 									this.matrix[index - 1][col] = 0;
-								}
-								
+								}				
 							}
-							
 						}
-						
 					}
 					line = true;
 				}
-				
 			}
-			
 		}
 		
+
 		// draw  all text that doesn't change
 		sideCtx.font = "26px Fixedsys";
 		sideCtx.fillStyle = "white";
@@ -205,6 +188,7 @@ window.onkeydown = function start(event) {
 			},	
 			
 		}
+
 		
 		// post initial values
 		sideCtx.fillText("" + scoreBoard.score, sideCanvas.width / 2, 80);
@@ -358,10 +342,10 @@ window.onkeydown = function start(event) {
 		
 		
 		// listen for keypresses
-		document.onkeydown = check;
+		document.onkeydown = movment;
 		
 		// handle each keypress
-		function check(e) {
+		function movment(e) {
 			
 			e = e || window.event;
 			
