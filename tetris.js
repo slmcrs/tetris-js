@@ -28,15 +28,17 @@ window.onkeydown = function start(event) {
 		const pauseImg = new Image();
 		pauseImg.src = './img/paused.png';
 		
-		const gameRowCount = 24;
+		const gameRowCount = 20;
 		const gameColumnCount = 10;
 		const squareSize = 30;
 		const startPosition = {row: -4, col: 3};
 		
 		canvas.width = gameColumnCount * squareSize;
-		canvas.height = gameRowCount * squareSize;
+		canvas.height = sideCanvas.height = gameRowCount * squareSize;
 		
 		let gameOver = false;
+		let bag = getShapeBag();
+		let nextpiece;
 		
 		// returns a random integer within 0 through max
 		function randomInt(max) {
@@ -54,17 +56,58 @@ window.onkeydown = function start(event) {
 		}
 		
 		
-		// returns a random shape
-		function randomShape() {
-			let count = 0;
-			let choice = randomInt(7);
+		// returns a shape bag
+		function getShapeArray() {
+			let arr = [];
 			for (let shape in shapes) {
-				if (count++ == choice) {
-					return shapes[shape];
-				}
+				arr.push(shapes[shape]);
 			}
+			return arr;
 		}
-		
+
+
+		// shuffles an array
+		function shuffle(arr) {
+		    var i, j, temp;
+		    for (i = arr.length - 1; i > 0; i--) {
+		        j = Math.floor(Math.random() * (i + 1));
+		        temp = arr[i];
+		        arr[i] = arr[j];
+		        arr[j] = temp;
+		    }
+		    return arr;    
+		};
+
+
+		// returns a shuffled bag
+		function getShapeBag() {
+			return shuffle(getShapeArray());
+		}
+
+
+		function getNextShape() {
+
+			let piece;
+
+			if (bag.length > 0) {
+
+				if (!nextpiece) {
+					piece = bag.pop();
+					nextpiece = bag.pop();
+				} else {
+					piece = nextpiece;
+					nextpiece = bag.pop();
+				}
+
+			} else {
+				bag = getShapeBag();
+				return getNextShape();
+			}
+
+			return piece;
+			
+		}
+
 
 		// maps the color number to the img file
 		function getImgSrc(number) {
@@ -81,6 +124,14 @@ window.onkeydown = function start(event) {
 			let img = new Image();
 			img.src = getImgSrc(colorInt);
 			ctx.drawImage(img, col * img.width, row * img.height);
+		}
+
+
+		// draws the block png at the specified position
+		function drawSideBlock(colorInt, col, row) {
+			let img = new Image();
+			img.src = getImgSrc(colorInt);
+			sideCtx.drawImage(img, col * img.width, row * img.height);
 		}
 		
 
@@ -180,11 +231,24 @@ window.onkeydown = function start(event) {
 				sideCtx.textAlign = "center";
 				sideCtx.fillText("SCORE:", sideCanvas.width / 2, 50); 
 				sideCtx.fillText("LINES:", sideCanvas.width / 2, 250);
-				sideCtx.fillText("NEXT PIECE:", sideCanvas.width / 2, 450);
+				sideCtx.fillText("NEXT PIECE:", sideCanvas.width / 2, 420);
 				
 				
 				sideCtx.fillText("" + scoreBoard.score, sideCanvas.width / 2,80);
 				sideCtx.fillText("" + scoreBoard.linesCleared, sideCanvas.width / 2, 280);
+
+				let piece = nextpiece.variants[0];
+				let color = nextpiece.colorNumber;
+
+				for (let row = 0; row < piece.length; row++) {
+					for (let col = 0; col < piece[row].length; col++) {
+						if (piece[row][col] != 0) {
+							let drawCol = 2 + col;
+							let drawRow = 15 + row;
+							drawSideBlock(color, drawCol, drawRow);
+						}
+					}
+				}
 			},	
 			
 		}
@@ -195,7 +259,7 @@ window.onkeydown = function start(event) {
 		sideCtx.fillText("" + scoreBoard.linesCleared, sideCanvas.width / 2, 280);
 		
 		// initial piece info
-		let first_shape = randomShape();
+		let first_shape = getNextShape();
 		let first_color = first_shape.colorNumber;
 		let first_index = randomInt(first_shape.variants.length);
 		let first_piece = first_shape.variants[first_index];
@@ -263,7 +327,7 @@ window.onkeydown = function start(event) {
 					scoreBoard.draw();
 					
 					// added so variables change for a different piece
-					this.shape = randomShape();
+					this.shape = getNextShape();
 					this.index = randomInt(this.shape.variants.length);
 					this.piece = this.shape.variants[this.index];
 					this.color = this.shape.colorNumber;
@@ -399,6 +463,7 @@ window.onkeydown = function start(event) {
 		
 				ctx.clearRect(0, 0, canvas.width, canvas.height);
 				board.draw();
+				scoreBoard.draw();
 				player.draw();
 
 			} else if (gameOver) {
@@ -413,19 +478,6 @@ window.onkeydown = function start(event) {
 			
 		}
 		
-		
-		
-		//if 'gameOver' is flagged we show a 
-		//game over message and reload. Primitive for now
-		//but we can make it fancier later if neccessary
-		
-		//need to pause timer when 'paused'.
-		//not sure how to do this. Could just
-		//scrap the timer, tetris isn't a long game and
-		//if player can continue scoring why limit time?
-
-		// in response to the above, setInterval runs whatever is in it
-		// every so often (the number below the function).
 
 		// game timer
 		let gameTimer = setInterval( function() {
